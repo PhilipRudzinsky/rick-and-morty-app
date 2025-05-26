@@ -2,9 +2,17 @@ import { CharacterApiResponse, CharacterModel as CharacterApiModel } from './mod
 import { CharacterModel } from '../domain/models/character.model';
 
 export const getCharacters = async (
-    page: number
+    page: number,
+    name?: string,
+    status?: string,
+    species?: string
 ): Promise<{ characters: CharacterModel[]; hasNextPage: boolean }> => {
-    const res = await fetch(`https://rickandmortyapi.com/api/character?page=${page}`);
+    const params = new URLSearchParams({ page: page.toString() });
+    if (name) params.append('name', name);
+    if (status) params.append('status', status);
+    if (species) params.append('species', species);
+
+    const res = await fetch(`https://rickandmortyapi.com/api/character?${params.toString()}`);
     if (!res.ok) throw new Error('Failed to fetch characters');
 
     const data = (await res.json()) as CharacterApiResponse;
